@@ -521,6 +521,21 @@ class TickerBase():
             self.history(period="max", proxy=proxy)
         actions = self._history[["Dividends", "Stock Splits"]]
         return actions[actions != 0].dropna(how='all').fillna(0)
+    
+    def fill_calendar(self, data):
+        try:
+            cal = _pd.DataFrame(
+                data)
+            cal1 = cal
+            cal['earningsDate'] = _pd.to_datetime(
+                cal['earningsDate'], unit='s')
+            self._calendar = cal.T
+            self._calendar.index = utils.camel2title(self._calendar.index)
+            self._calendar.columns = ['Value']
+            return cal1
+        except Exception:
+            pass
+        #print(type(self._calendar))
 
     def get_isin(self, proxy=None):
         # *** experimental ***
